@@ -41,13 +41,13 @@ chgrp aula trabalho
 ls -l | grep trabalho
 
 drwxr-xr-x ...trabalho
-(d = diretório)
-(rwx = permissões di proprietário(user1))
-(r-x = permissões do grupo de vínculo(aula:user1,user2))
-(r-x = permissões dos outros usuários)
+[d = diretório]
+[rwx = permissões di proprietário(user1)]
+[r-x = permissões do grupo de vínculo(aula:user1,user2)]
+[r-x = permissões dos outros usuários]
 
-chmod (modo octal) -----> sintaxe 
-
+chmod (modo octal) -----> sintaxe chmod xxx <arquivo/diretorio>d
+                                      [3 n/° de 0 a 7]
 [0 - nenhuma permissão]
 [1 - executar]
 [2 - gravar]
@@ -56,5 +56,36 @@ chmod (modo octal) -----> sintaxe
 [5 - ler + executar (4+1)]
 [6 - ler + gravar (4+2)]
 [7 - ler + gravar + executar (4 +2 + 1)]
+[obs: o direito minimo para diretórios é 5 (permite entrar e ler/ listar)]
+
+pwd
+chmod 750 trabalho
+[7 - proprietario]
+[5 - grupo]
+[0 - outros]
+
+ls -l | grep trabalho
+drwxr-x---
+
+su user4
+whoami
+cd /trabalho
+exit
+
+su user2
+cd /trabalho 
+ls -l
+exit
+
+cd /trabalho
+chmod 774 arq*
+su user2
+pwd
+rm *(permission denied)
+exit
+
+su user1
+cd /trabalho
+rm arq5.txt 
 
 
