@@ -40,7 +40,21 @@ chgrp aula trabalho
 
 ls -l | grep trabalho
 
+drwxr-xr-x ...trabalho
+(d = diretório)
+(rwx = permissões di proprietário(user1))
+(r-x = permissões do grupo de vínculo(aula:user1,user2))
+(r-x = permissões dos outros usuários)
 
+chmod (modo octal) -----> sintaxe 
 
+[0 - nenhuma permissão]
+[1 - executar]
+[2 - gravar]
+[3 - executar + gravar (2+1)]
+[4 - ler]
+[5 - ler + executar (4+1)]
+[6 - ler + gravar (4+2)]
+[7 - ler + gravar + executar (4 +2 + 1)]
 
 
