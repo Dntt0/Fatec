@@ -1,0 +1,46 @@
+wsl --user root
+useradd -m user1
+useradd -m user2
+useradd -m user3
+useradd -m user4
+
+passwd user1
+passwd user2
+passwd user3
+passwd user4
+
+addgroup aula
+
+usermod -aG user1
+usermod -aG user2
+
+usermod -aG sudo user3
+
+mkdir /trabalho
+
+cat /etc/passwd | grep user (lista linhas c/"user")
+cat /etc/group | grep aula (lista linhas c/"aula")
+cat /etc/group | grep sudo (lista linhas c/"sudo")
+
+cd /trabalho
+
+touch arq{1..5}.txt
+ls -l
+
+chown user1 arq* (change owner)
+ls -l
+
+chagrp aula arq*(change group / muda o grupo de vinculo de arquivos/diretório)
+ls -l
+
+cd /
+
+chonw user1 trabalho
+chgrp aula trabalho
+
+ls -l | grep trabalho
+
+
+
+
+
