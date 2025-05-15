@@ -1,0 +1,23 @@
+1) wsl --user root
+
+2) mkdir /home
+cd /home
+mkdir /so_2
+cd /so_
+
+3) mkdir /dir_01
+mkdir /dir_02
+
+4) cat > file_01.txt
+"Emptiness Machine"
+ctrl+D
+
+cat > file_02.txt
+"Over Each Other"
+ctrl+D
+
+cat > file_03.txt
+"What I've Done"
+ctrl+D
+
+
