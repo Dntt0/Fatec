@@ -1,0 +1,40 @@
+CREATE DATABASE arvore_gene;
+USE arvore_gene;
+
+CREATE TABLE pessoa (
+  cpf INT PRIMARY KEY,
+  nome VARCHAR(15) NOT NULL,
+  sobrenome VARCHAR(80) NOT NULL,
+  data_nascimento DATE NOT NULL,
+  local_nascimento VARCHAR(150),
+  sexo CHAR(1) NOT NULL,
+  data_falecimento DATE
+);
+
+CREATE TABLE uniao (
+  matricula INT(32) PRIMARY KEY,
+  tipo VARCHAR(20) NOT NULL,
+  data_inicio DATE NOT NULL,
+  data_fim DATE,
+  local VARCHAR(150),
+  status VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE participacao (
+  cpf INT NOT NULL,
+  matricula INT NOT NULL,
+  papel VARCHAR(20) NOT NULL,
+  PRIMARY KEY (cpf, matricula),
+  FOREIGN KEY (cpf) REFERENCES pessoa(cpf),
+  FOREIGN KEY (matricula) REFERENCES uniao(matricula)
+);
+
+CREATE TABLE filiacao (
+  pai_id INT ,
+  mae_id INT NOT NULL,
+  filho_id INT NOT NULL,
+  PRIMARY KEY (pai_id, mae_id, filho_id),
+  FOREIGN KEY (pai_id) REFERENCES pessoa(cpf),
+  FOREIGN KEY (mae_id) REFERENCES pessoa(cpf),
+  FOREIGN KEY (filho_id) REFERENCES pessoa(cpf)
+);
