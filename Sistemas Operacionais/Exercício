@@ -38,3 +38,24 @@ mv file_03.txt file_09.txt
 useradd -m james_bond
 passwd john_wick (123456)
 passwd james_bond (123456)
+
+8)sudo useradd -m -d /home/obi_wan_kenobi obi_wan_kenobi
+
+9)passwd -d obi_wan_kenobi
+passwd -e obi_wan_kenobi
+
+10)passwd -x 20 john_wick
+passwd -x 20 james_bond
+
+11)addgroup good_guys
+usermod -aG good_guys obi_wan_kenobi
+usermod -aG good_guys james_bond
+
+12) usermod -aG sudo obi_wan_kenobi
+
+13)cat /etc/group | grep sudo
+
+14)su obi_wan_kenobi
+whoami
+
+15)
