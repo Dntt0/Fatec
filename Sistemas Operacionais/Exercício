@@ -58,4 +58,7 @@ usermod -aG good_guys james_bond
 14)su obi_wan_kenobi
 whoami
 
-15)
+15)sudo chown james_bond dir_01
+sudo chgrp good_guys dir_01
+
+16)
