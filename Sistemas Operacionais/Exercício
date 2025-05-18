@@ -1,12 +1,11 @@
 1) wsl --user root
 
 2) mkdir /home
-cd /home
-mkdir /so_2
-cd /so_
+mkdir /home/so_2
+cd /home/so_2
 
-3) mkdir /dir_01
-mkdir /dir_02
+3) mkdir /home/so_2/dir_01
+mkdir home/so_2/dir_02
 
 4) cat > file_01.txt
 "Emptiness Machine"
@@ -20,4 +19,22 @@ cat > file_03.txt
 "What I've Done"
 ctrl+D
 
+cp file_*.txt /home/so_2/dir_01
+cp file_*.txt /home/so_2/dir_02
 
+5) cd /home/so_2/dir_01
+
+mv file_01.txt file_04.txt
+mv file_02.txt file_05.txt
+mv file_03.txt file_06.txt
+
+6)cd /home/so_2/dir_02
+
+mv file_01.txt file_07.txt
+mv file_02.txt file_08.txt
+mv file_03.txt file_09.txt
+
+7)useradd -m john_wick
+useradd -m james_bond
+passwd john_wick (123456)
+passwd james_bond (123456)
