@@ -55,10 +55,42 @@ usermod -aG good_guys james_bond
 
 13)cat /etc/group | grep sudo
 
-14)su obi_wan_kenobi
+14)sudo su obi_wan_kenobi
 whoami
 
 15)sudo chown james_bond dir_01
 sudo chgrp good_guys dir_01
 
-16)
+16)cd /home/so_2
+sudo chmod 775 dir_01
+
+17)sudo chmod 744 dir_02
+
+18)cd /home
+sudo chmod 777 so_2/file_*.txt
+
+19)exit
+su james_bond
+
+20)cd /home/so_2/dir_01
+ls -l
+sim, os arquivos podem ser lidos,editados,executados e apagados
+
+21)rm file_05.txt
+rm: remove write-protected regular file 'file_05.txt'? y
+ele pergunta se você quer remover, e confirmando com y de (yes) ele remove o arquivo
+
+22)cd /home/so_2/dir_02
+sh: 25: cd: can't cd to /home/so_2/dir_02
+isso ocorre porque o usuario james_bond não tem permissão para entrar devido o comando sudo chmod 744 dir_02
+
+23)exit
+su obi_wan_kenobi
+whoami
+
+24)cd /home/so_2
+sudo chown john_wick dir_02
+cd /home/so_2/dir_02
+sh: 8: cd: can't cd to /home/so_2/dir_02
+
+
