@@ -92,5 +92,27 @@ whoami
 sudo chown john_wick dir_02
 cd /home/so_2/dir_02
 sh: 8: cd: can't cd to /home/so_2/dir_02
+não, pois foi alterado o proprietario do diretório
+
+25)exit
+su john_wick 
+whoami
+
+26)cd /home/so_2
+ls -l
+
+drwxrwxr-x 1 james_bond good_guys 512 May 19 09:05 dir_01
+drwxr--r-- 1 john_wick  root      512 May 19 08:07 dir_02
+-rwxrwxrwx 1 root       root        6 May 19 08:04 file_01.txt
+-rwxrwxrwx 1 root       root       11 May 19 08:04 file_02.txt
+-rwxrwxrwx 1 root       root       11 May 19 08:04 file_03.txt
+
+cd /home/so_2/dir_02
+ele consegue acessar o diretório e modificar os arquivos, pois ele é o novo dono do diretório
+
+27)cd /home/so_2
+rm dir_02
+rm: cannot remove 'dir_02': Is a directory
+não permite excluir o diretório
 
 
