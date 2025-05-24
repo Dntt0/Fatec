@@ -1,0 +1,34 @@
+from machine import Pin, I2C, ADC
+import machine
+import time
+import ssd1306
+import framebuf
+ 
+ 
+i2c = machine.I2C(-1, machine.Pin(22), machine.Pin(21))
+oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+ 
+pot = ADC(Pin(34))  
+ 
+# Carregar e exibir a imagem PBM
+with open('term0.pbm', 'rb') as Arq:
+    Arq.readline() 
+    Arq.readline()  
+    Arq.readline()  
+    data = bytearray(Arq.read())  # Ler os dados da imagem
+    buffer = framebuf.FrameBuffer(data, 128, 64, framebuf.MONO_HLSB)  # Converter para FrameBuffer
+    oled.fill(0)  # Limpar a tela antes de exibir a imagem
+    oled.blit(buffer, 0, 10)  
+    oled.show()  
+    time.sleep
+    Arq.close()
+ 
+# Loop principal
+while True:
+    valor = pot.read()
+    temp = (valor * 128) // 4095  
+    oled.fill_rect(5, 40, temp, 5, 1)  # Desenhar o retângulo
+    oled.show()
+    oled.fill_rect(5, 40,( temp <128 ), 5, 0)
+    oled.show()
+    time.sleep(0.1)
