@@ -1,0 +1,67 @@
+from machine import Pin, RTC
+from time import sleep
+import network
+import esp
+import gc
+import urequests  
+
+esp.osdebug(None)
+gc.collect()
+
+ssid = 'CARLOS'
+password = 'sp181309'
+
+print('##### Iniciando conexão Wi-Fi')
+station = network.WLAN(network.STA_IF)
+station.active(False)
+sleep(2)
+station.active(True)
+station.connect(ssid, password)
+
+while not station.isconnected():
+    print('-', end=" ")
+    sleep(0.2)
+
+print("\nConexão OK")
+print("IP:", station.ifconfig()[0])
+print("Máscara:", station.ifconfig()[1])
+print("Gateway:", station.ifconfig()[2])
+print("DNS:", station.ifconfig()[3])
+
+rtc = RTC()
+anterior = ''
+horario = ''
+
+def sincronizar_relogio():
+    global horario
+    try:
+        timezone = 'America/Sao_Paulo'
+        api_url = 'https://api.api-ninjas.com/v1/worldtime?timezone={}'.format(timezone)
+        resposta = urequests.get(api_url, headers={'X-Api-Key': 'J30jOg+U/B+NYrGHBJl/zA==b5uV7gzrv105oSPu'})
+        print('JSON:', resposta.text)
+        json = resposta.json()
+        agora = str(json["datetime"])
+        ano = int(agora[0:4])
+        mes = int(agora[5:7])
+        dia = int(agora[8:10])
+        hora = int(agora[11:13])
+        minuto = int(agora[14:16])
+        segundo = int(agora[17:19])
+        rtc.datetime((ano, mes, dia, 0, hora, minuto, segundo, 0))
+        print("RTC ATUALIZADO:", rtc.datetime())
+        horario = "{:02d}:{:02d}".format(rtc.datetime()[4], rtc.datetime()[5])
+    except Exception as e:
+        print('>>>> Erro: sem acesso à internet ou erro na API:', e)
+
+sincronizar_relogio()
+
+while True:
+    data = "{:02d}/{:02d}/{:04d}".format(rtc.datetime()[2], rtc.datetime()[1], rtc.datetime()[0])
+    horario = "{:02d}:{:02d}".format(rtc.datetime()[4], rtc.datetime()[5])
+    
+    if horario != anterior:
+        print("Data:", data, "|| Hora:", horario)
+        anterior = horario
+    sleep(1)
+
+
