@@ -1,0 +1,163 @@
+from machine import Pin, I2C, ADC, RTC
+from umqtt.simple import MQTTClient
+from time import sleep
+import urequests
+import requests
+import ssd1306
+import network
+import umail
+import dht
+import esp
+import gc
+
+print("----- Iniciando -----")
+
+sensor = dht.DHT11(Pin(2))
+pot = ADC(Pin(34))
+bt = Pin(4, Pin.IN, Pin.PULL_UP)
+led_verm = Pin(25, Pin.OUT)
+led_verd = Pin(26, Pin.OUT)
+
+esp.osdebug(None)
+gc.collect()
+
+ssid = 'CARLOS'
+password = 'sp181309'
+phone_number = '5511984921381'
+api_key = '4638363'
+
+sender_email = 'mendes.alessandro34@gmail.com'
+sender_name = 'ESP32-Integração Email & Whats'
+sender_app_password = 'ygxb hqlo uvzj clmi'
+recipient_email = 'mendes.alessandro34@gmail.com'
+email_subject = 'Test Email'
+
+MQTT_BROKER = "test.mosquitto.org"
+MQTT_TOPIC_SUB = "esp32/comando"
+MQTT_TOPIC_PUB = "esp32/sensores"
+CLIENT_ID = "esp32_p2"
+
+rtc = RTC()
+anterior = ''
+horario = ''
+
+i2c = I2C(scl=Pin(22), sda=Pin(23))
+oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+
+station = network.WLAN(network.STA_IF)
+station.active(False)
+sleep(2)
+station.active(True)
+station.connect(ssid, password)
+
+while not station.isconnected():
+    print('-', end=" ")
+    sleep(0.2)
+
+print("\nConexão OK:", station.ifconfig()[0])
+
+def send_message(phone_number, api_key, message):
+    url = f'https://api.callmebot.com/whatsapp.php?phone={phone_number}&text={message}&apikey={api_key}'
+    response = requests.get(url)
+    print('WhatsApp:', 'Success' if response.status_code == 200 else 'Error')
+
+def msg_email(msg):
+    smtp = umail.SMTP('smtp.gmail.com', 465, ssl=True)
+    smtp.login(sender_email, sender_app_password)
+    smtp.to(recipient_email)
+    smtp.write(f"From:{sender_name} <{sender_email}>\n")
+    smtp.write("Subject:" + email_subject + "\n\n")
+    smtp.send(msg)
+    smtp.quit()
+
+def sincronizar_relogio():
+    global horario
+    try:
+        resposta = urequests.get("https://api.api-ninjas.com/v1/worldtime?timezone=America/Sao_Paulo",
+                                 headers={'X-Api-Key': 'J30jOg+U/B+NYrGHBJl/zA==b5uV7gzrv105oSPu'})
+        json = resposta.json()
+        agora = json["datetime"]
+        rtc.datetime((
+            int(agora[0:4]), int(agora[5:7]), int(agora[8:10]),
+            0, int(agora[11:13]), int(agora[14:16]), int(agora[17:19]), 0))
+        horario = "{:02d}:{:02d}".format(rtc.datetime()[4], rtc.datetime()[5])
+    except Exception as e:
+        print('Erro na sincronização de horário:', e)
+
+def sub_callback(topic, msg):
+    print("MQTT comando:", topic, msg)
+    if msg == b'1':
+        led_verm.on()
+        enviar_dados()
+    elif msg == b'0':
+        led_verm.off()
+
+def mqtt_setup():
+    client = MQTTClient(CLIENT_ID, MQTT_BROKER)
+    client.set_callback(sub_callback)
+    client.connect()
+    client.subscribe(MQTT_TOPIC_SUB)
+    print("MQTT conectado.")
+    return client
+
+def enviar_dados():
+    sensor.measure()
+    temp = sensor.temperature()
+    umid = sensor.humidity()
+    valor_pot = pot.read()
+
+    msg = f"Sensores:\nTemperatura: {temp} C\nUmidade: {umid}%\nLuminosidade: {valor_pot}"
+    whatsapp_msg = f"Enviando%20dados%20dos%20sensores%20%5CnLuz%3A{valor_pot}%5CnUmidade%3A{umid}%5CnTemperatura%3A{temp}"
+
+    oled.fill(0)
+    oled.text("Enviando", 20, 15)
+    oled.text("Mensagem...", 10, 40)
+    oled.show()
+
+    msg_email(msg)
+    send_message(phone_number, api_key, whatsapp_msg)
+
+sincronizar_relogio()
+client = mqtt_setup()
+
+oled.fill(0)
+oled.text('Projeto P2', 26, 10)
+oled.text('Pedro e Alessandro', 0, 30)
+oled.show()
+sleep(2)
+
+while True:
+    client.check_msg()
+
+    sensor.measure()
+    temp = sensor.temperature()
+    umid = sensor.humidity()
+    valor_pot = pot.read()
+    valor_bt = bt.value()
+
+    data = "{:02d}/{:02d}/{:04d}".format(rtc.datetime()[2], rtc.datetime()[1], rtc.datetime()[0])
+    horario = "{:02d}:{:02d}".format(rtc.datetime()[4], rtc.datetime()[5])
+
+    oled.fill(0)
+    oled.rect(0, 0, 128, 64, 1)
+    oled.text(f"{data}", 15, 5)
+    oled.text(f"{horario}", 25, 15)
+    oled.text(f"Temp: {temp:.1f} C", 5, 25)
+    oled.text(f"Umid: {umid:.1f} %", 5, 35)
+    oled.text(f"Luz: {valor_pot}", 5, 45)
+    oled.text(f"Bt: {valor_bt}", 5, 55)
+    oled.show()
+
+    payload = f'{{"temperatura": {temp}, "umidade": {umid}, "luminosidade": {valor_pot}, "botao": {valor_bt}}}'
+    client.publish(MQTT_TOPIC_PUB, payload)
+
+    if valor_bt == 0:
+        led_verm.on()
+        led_verd.off()
+        enviar_dados()
+        sleep(1)
+    else:
+        led_verm.off()
+        led_verd.on()
+
+    sleep(2)
