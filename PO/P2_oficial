@@ -21,10 +21,10 @@ led_verd = Pin(26, Pin.OUT)
 esp.osdebug(None)
 gc.collect()
 
-ssid = 'CARLOS'
-password = 'sp181309'
-phone_number = '5511984921381'
-api_key = '4638363'
+ssid = '####'
+password = '######'
+phone_number = '######'
+api_key = '#####'
 
 sender_email = 'mendes.alessandro34@gmail.com'
 sender_name = 'ESP32-Integração Email & Whats'
