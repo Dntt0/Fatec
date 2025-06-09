@@ -26,9 +26,9 @@ password = '######'
 phone_number = '######'
 api_key = '#####'
 
-sender_email = 'mendes.alessandro34@gmail.com'
+sender_email = '########'
 sender_name = 'ESP32-Integração Email & Whats'
-sender_app_password = 'ygxb hqlo uvzj clmi'
+sender_app_password = '######'
 recipient_email = 'mendes.alessandro34@gmail.com'
 email_subject = 'Test Email'
 
